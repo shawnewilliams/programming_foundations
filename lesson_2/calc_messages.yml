@@ -1,0 +1,22 @@
+en:
+  welcome: "Welcome to Calculator! Enter your name:"
+  valid_name: "Make sure to enter a valid name."
+  hi: "Hi"
+  exc: "!"
+  first_num: "What’s the first number?"
+  second_num: "What's the second number?"
+  valid_num: "Hmm... that doesn't look like a valid number."
+
+  msg: "What operation would you like to perform?\n1) add\n2) subtract\n3) multiply\n4) divide"
+  valid_opp: "Must choose 1, 2, 3, or 4"
+  add: "Adding"
+  sub: "Subtracting"
+  mult: "Multiplying"
+  div: "Dividing"
+  operating: "the two numbers..."
+  result: "The result is"
+  repeat: "Do you want to perform another calculation? (Y to calculate again)"
+  bye: "Good bye!"
+es:
+  welcome: "Bienvenido a la calculadora! Entre su nombre:"
+  valid_name: "Asegúrese de entrar un nombre válido."
