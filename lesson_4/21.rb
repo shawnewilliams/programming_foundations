@@ -210,9 +210,6 @@ end
 # *****************************************************
 
 deck = new_deck(1)
-count = 0
-computer_score = 0
-player_score = 0
 cash = 100
 player = ''
 prompt "Let's play #{MAX}."
@@ -319,7 +316,7 @@ loop do # Game loop
     puts
     break
   end # End computer turn
-  count += 1
+
   puts "---------------------------"
   puts
   puts "#{player}'s Total: #{player_total}"
@@ -328,26 +325,19 @@ loop do # Game loop
 
   display_winner(player, "Computer", player_hand, computer_hand)
   puts
-  puts "Round #{count}"
 
   result = won?(player_hand, computer_hand)
   case result
   when :hand1
-    player_score += 1
     cash += bet
   when :hand2_busted
-    player_score += 1
     cash += bet
   when :hand2
     cash -= bet
-    computer_score  += 1
   when :hand1_busted
-    computer_score  += 1
     cash -= bet
   end
 
-  puts "#{player}'s Score: #{player_score}"
-  puts "Computer's Score: #{computer_score}"
   puts "You have $#{cash}"
   puts
 
