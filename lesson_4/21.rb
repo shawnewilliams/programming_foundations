@@ -182,9 +182,9 @@ def display_winner(player1, player2, hand1, hand2)
   result = won?(hand1, hand2)
   case result
   when :hand2_busted
-    puts "#{player2} busted. #{player1} WINS!"
+    puts "#{player2} Busted. #{player1} WINS!"
   when :hand1_busted
-    puts "#{player1} busted. #{player2} WINS!"
+    puts "#{player1} Busted. #{player2} WINS!"
   when :hand1
     puts "#{player1} WINS!"
   when :hand2
@@ -206,9 +206,14 @@ def valid_num(num, cash)
   /\d/.match(num) && /^\d*\.?\d*$/.match(num) && num.to_i <= cash
 end
 
+def clear_screen
+  system('clear') || system('cls')
+end
+
 # Strat program
 # *****************************************************
 
+clear_screen
 deck = new_deck(1)
 cash = 100
 player = ''
@@ -224,10 +229,12 @@ loop do
   end
 end
 
-prompt "Hello #{player}. We will start you out with $100."
+prompt "Hello #{player}!"
+puts
 
 loop do # Game loop
   bet = 0
+  prompt "You have $#{cash}."
   prompt "How much would you like to bet"
   bet = gets.chomp
   loop do
@@ -240,8 +247,9 @@ loop do # Game loop
   computer_hand = []
   computer_cards = first_card
 
-  puts
-  puts "---------------------------"
+  clear_screen
+
+# Deal ************
   puts
   deal("Computer", computer_hand, deck, computer_cards)
   computer_total = total(computer_hand)
@@ -253,14 +261,14 @@ loop do # Game loop
   player_total = total(player_hand)
   puts "#{player}'s Total = #{player_total}"
   puts
-  puts "---------------------------"
-  puts
+
   bet = bet.to_i
   if player_total == 21 && computer_total != 21
     bet *= 1.5
   end
 
-  loop do # Player turn
+# Player turn ************************************
+  loop do 
     prompt "Hit or Stay? (H or S)"
     answer = gets.chomp
     loop do
@@ -280,49 +288,62 @@ loop do # Game loop
     puts
     puts "#{player} Hits at #{player_total}"
     puts
+    clear_screen
     hit(player, player_hand, deck, player_cards)
     player_total = total(player_hand)
     puts "#{player}'s Total = #{player_total}"
     puts
     next unless busted?(player_hand)
-    sleep(0.5)
     puts "#{player} Busted!"
+    sleep(2)
     puts
     break
-  end # End player turn
+  end 
+  # End player turn ******************************
 
-  puts "---------------------------"
-  puts
+  clear_screen
+
   puts "Computer's Hand"
   puts computer_cards
+  puts "Computer's Total = #{computer_total}"
 
-  loop do # Computer turn
-    puts "Computer's Total = #{computer_total}"
-    puts
-    sleep(0.5)
-    if computer_total >= MIN || busted?(player_hand)
-      puts "Computer Stays"
+# Computer turn ************************************
+  loop do 
+    sleep(1)
+    break if busted?(player_hand)
+    if computer_total >= MIN 
       puts
+      puts "Computer Stays"
+      sleep(1)
       break
     end
-    puts "Computer Hits"
     puts
+    puts "Computer Hits"
+    sleep(1)
+    clear_screen
     hit("Computer", computer_hand, deck, computer_cards)
     computer_total = total(computer_hand)
-    next unless busted?(computer_hand)
     puts "Computer's Total = #{computer_total}"
+    next unless busted?(computer_hand)
     puts
     puts "Computer Busted!"
-    puts
+    sleep(1)
     break
-  end # End computer turn
+  end 
+  # End computer turn ******************************
 
+  clear_screen
+  puts "#{player}'s Hand"
+  puts player_cards
+  puts "#{player}'s Total = #{player_total}"
+  puts
+  puts puts "Computer's Hand"
+  puts computer_cards
+  puts "Computer's Total = #{computer_total}"
+  puts
   puts "---------------------------"
   puts
-  puts "#{player}'s Total: #{player_total}"
-  puts "Computer's Total: #{computer_total}"
-  puts
-
+ 
   display_winner(player, "Computer", player_hand, computer_hand)
   puts
 
@@ -357,7 +378,7 @@ loop do # Game loop
     end
   end
   break if answer.casecmp('n') == 0
-  sleep(0.5)
+  clear_screen
 end # End game loop
 puts "Thanks for playing. Goodbye!"
 puts
