@@ -249,7 +249,7 @@ loop do # Game loop
 
   clear_screen
 
-# Deal ************
+  # Deal ************
   puts
   deal("Computer", computer_hand, deck, computer_cards)
   computer_total = total(computer_hand)
@@ -267,8 +267,8 @@ loop do # Game loop
     bet *= 1.5
   end
 
-# Player turn ************************************
-  loop do 
+  # Player turn ************************************
+  loop do
     prompt "Hit or Stay? (H or S)"
     answer = gets.chomp
     loop do
@@ -298,7 +298,7 @@ loop do # Game loop
     sleep(2)
     puts
     break
-  end 
+  end
   # End player turn ******************************
 
   clear_screen
@@ -307,11 +307,11 @@ loop do # Game loop
   puts computer_cards
   puts "Computer's Total = #{computer_total}"
 
-# Computer turn ************************************
-  loop do 
+  # Computer turn ************************************
+  loop do
     sleep(1)
     break if busted?(player_hand)
-    if computer_total >= MIN 
+    if computer_total >= MIN
       puts
       puts "Computer Stays"
       sleep(1)
@@ -329,7 +329,7 @@ loop do # Game loop
     puts "Computer Busted!"
     sleep(1)
     break
-  end 
+  end
   # End computer turn ******************************
 
   clear_screen
@@ -343,7 +343,7 @@ loop do # Game loop
   puts
   puts "---------------------------"
   puts
- 
+
   display_winner(player, "Computer", player_hand, computer_hand)
   puts
 
