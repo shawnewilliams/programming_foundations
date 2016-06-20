@@ -60,7 +60,7 @@ def add_to_hand(hand, card)
   hand.push(card)
 end
 
-def cards_in_hand(cards, card)
+def compile_cards_in_hand!(cards, card)
   new_line = ''
   count = 0
 
@@ -79,7 +79,7 @@ def cards_in_hand(cards, card)
   cards.replace new_line
 end
 
-def computer_cards_in_hand(cards)
+def computer_compile_cards_in_hand!(cards)
   new_line = ''
   count = 0
   new_card = add_card
@@ -91,7 +91,7 @@ def computer_cards_in_hand(cards)
   cards.replace new_line
 end
 
-def shuffle?(deck)
+def shuffle_new_deck_if_necessary(deck)
   if deck.empty?
     puts
     puts "The deck is empty. Time to shuffle"
@@ -102,27 +102,30 @@ def shuffle?(deck)
 end
 
 def deal(player, hand, deck, cards)
-  shuffle?(deck)
-  add_to_hand(hand, card_1 = card(deck))
-  shuffle?(deck)
-  add_to_hand(hand, card_2 = card(deck))
+  shuffle_new_deck_if_necessary(deck)
+  card_1 = card(deck)
+  add_to_hand(hand, card_1)
+  shuffle_new_deck_if_necessary(deck)
+  card_2 = card(deck)
+  add_to_hand(hand, card_2)
   puts "#{player}'s Hand:"
-  cards_in_hand(cards, card_1)
+  compile_cards_in_hand!(cards, card_1)
   if player == "Computer"
-    puts computer_cards_in_hand(cards)
+    puts computer_compile_cards_in_hand!(cards)
     cards.replace first_card
-    cards_in_hand(cards, card_1)
-    cards_in_hand(cards, card_2)
+    compile_cards_in_hand!(cards, card_1)
+    compile_cards_in_hand!(cards, card_2)
   else
-    puts cards_in_hand(cards, card_2)
+    puts compile_cards_in_hand!(cards, card_2)
   end
 end
 
 def hit(player, hand, deck, cards)
-  shuffle?(deck)
-  add_to_hand(hand, card = card(deck))
+  shuffle_new_deck_if_necessary(deck)
+  card = card(deck)
+  add_to_hand(hand, card)
   puts "#{player}'s Hand:"
-  puts cards_in_hand(cards, card)
+  puts compile_cards_in_hand!(cards, card)
 end
 
 # rubocop:disable MethodLength
@@ -202,12 +205,36 @@ def y_or_n?(ans)
   ans.casecmp('y') == 0 || ans.casecmp('n') == 0
 end
 
-def valid_num(num, cash)
-  /\d/.match(num) && /^\d*\.?\d*$/.match(num) && num.to_i <= cash
+def valid_num(num)
+  /\d/.match(num) && /^\d*\.?\d*$/.match(num)
+end
+
+def cash_spend?(num, cash)
+  num.to_i <= cash[0]
 end
 
 def clear_screen
   system('clear') || system('cls')
+end
+
+def bet_result!(hand1, hand2, bet, cash)
+ result = won?(hand1, hand2)
+  case result
+  when :hand1
+    cash[0] += bet
+  when :hand2_busted
+    cash[0] += bet
+  when :hand2
+    cash[0] -= bet
+  when :hand1_busted
+    cash[0] -= bet
+  end
+end
+
+def cash_is_zero(cash)
+  if cash == 0
+    puts "Ha ha! I have all your money. Better luck next time!"
+  end
 end
 
 # Strat program
@@ -215,7 +242,7 @@ end
 
 clear_screen
 deck = new_deck(1)
-cash = 100
+cash = [100]
 player = ''
 prompt "Let's play #{MAX}."
 prompt "What is your name?"
@@ -232,16 +259,18 @@ end
 prompt "Hello #{player}!"
 puts
 
-loop do # Game loop
-  bet = 0
-  prompt "You have $#{cash}."
+# Game loop ******************************************
+loop do 
+  bet = []
+  prompt "You have $#{cash[0]}."
   prompt "How much would you like to bet"
   bet = gets.chomp
   loop do
-    break if valid_num(bet, cash)
+    break if valid_num(bet) && cash_spend?(bet, cash)
     prompt "That's not a valid number. Please try again."
     bet = gets.chomp
   end
+  bet = bet.to_i
   player_hand = []
   player_cards = first_card
   computer_hand = []
@@ -262,7 +291,6 @@ loop do # Game loop
   puts "#{player}'s Total = #{player_total}"
   puts
 
-  bet = bet.to_i
   if player_total == 21 && computer_total != 21
     bet *= 1.5
   end
@@ -347,22 +375,12 @@ loop do # Game loop
   display_winner(player, "Computer", player_hand, computer_hand)
   puts
 
-  result = won?(player_hand, computer_hand)
-  case result
-  when :hand1
-    cash += bet
-  when :hand2_busted
-    cash += bet
-  when :hand2
-    cash -= bet
-  when :hand1_busted
-    cash -= bet
-  end
+  bet_result!(player_hand, computer_hand, bet, cash)
 
-  puts "You have $#{cash}"
+  puts "You have $#{cash[0]}"
   puts
 
-  if cash == 0
+  if cash[0] == 0
     puts "Ha ha! I have all your money. Better luck next time!"
     break
   end
@@ -379,6 +397,6 @@ loop do # Game loop
   end
   break if answer.casecmp('n') == 0
   clear_screen
-end # End game loop
+end # End game loop **********************************
 puts "Thanks for playing. Goodbye!"
 puts
