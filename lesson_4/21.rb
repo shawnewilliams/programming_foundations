@@ -101,6 +101,7 @@ def shuffle_new_deck_if_necessary(deck)
   end
 end
 
+# rubocop:disable MethodLength
 def deal(player, hand, deck, cards)
   shuffle_new_deck_if_necessary(deck)
   card_1 = card(deck)
@@ -119,6 +120,7 @@ def deal(player, hand, deck, cards)
     puts compile_cards_in_hand!(cards, card_2)
   end
 end
+# rubocop:enable MethodLength
 
 def hit(player, hand, deck, cards)
   shuffle_new_deck_if_necessary(deck)
@@ -218,7 +220,7 @@ def clear_screen
 end
 
 def bet_result!(hand1, hand2, bet, cash)
- result = won?(hand1, hand2)
+  result = won?(hand1, hand2)
   case result
   when :hand1
     cash[0] += bet
@@ -260,7 +262,7 @@ prompt "Hello #{player}!"
 puts
 
 # Game loop ******************************************
-loop do 
+loop do
   bet = []
   prompt "You have $#{cash[0]}."
   prompt "How much would you like to bet"
