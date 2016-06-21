@@ -211,31 +211,27 @@ def valid_num(num)
   /\d/.match(num) && /^\d*\.?\d*$/.match(num)
 end
 
-def cash_spend?(num, cash)
-  num.to_i <= cash[0]
+def enough_cash?(num, cash)
+  num.to_i <= cash
 end
 
 def clear_screen
   system('clear') || system('cls')
 end
 
-def bet_result!(hand1, hand2, bet, cash)
+def bet_result(hand1, hand2, bet, cash)
   result = won?(hand1, hand2)
   case result
   when :hand1
-    cash[0] += bet
+    cash + bet
   when :hand2_busted
-    cash[0] += bet
+    cash + bet
   when :hand2
-    cash[0] -= bet
+    cash - bet
   when :hand1_busted
-    cash[0] -= bet
-  end
-end
-
-def cash_is_zero(cash)
-  if cash == 0
-    puts "Ha ha! I have all your money. Better luck next time!"
+    cash - bet
+  when :tie
+    cash
   end
 end
 
@@ -244,7 +240,7 @@ end
 
 clear_screen
 deck = new_deck(1)
-cash = [100]
+cash = 100
 player = ''
 prompt "Let's play #{MAX}."
 prompt "What is your name?"
@@ -263,12 +259,11 @@ puts
 
 # Game loop ******************************************
 loop do
-  bet = []
-  prompt "You have $#{cash[0]}."
+  prompt "You have $#{cash}."
   prompt "How much would you like to bet"
   bet = gets.chomp
   loop do
-    break if valid_num(bet) && cash_spend?(bet, cash)
+    break if valid_num(bet) && enough_cash?(bet, cash)
     prompt "That's not a valid number. Please try again."
     bet = gets.chomp
   end
@@ -377,12 +372,12 @@ loop do
   display_winner(player, "Computer", player_hand, computer_hand)
   puts
 
-  bet_result!(player_hand, computer_hand, bet, cash)
+  cash = bet_result(player_hand, computer_hand, bet, cash)
 
-  puts "You have $#{cash[0]}"
+  puts "You have $#{cash}"
   puts
 
-  if cash[0] == 0
+  if cash == 0
     puts "Ha ha! I have all your money. Better luck next time!"
     break
   end
